@@ -1,4 +1,4 @@
-import type { HomeScreenProps } from '@/types/navigation';
+import { HomeScreenProps } from '@_types/NavigationProps';
 import React from 'react';
 
 import { Pressable, Text, View } from 'react-native';

@@ -5,8 +5,8 @@
  * @format
  */
 
+import RootNavigation from '@navigation/RootNavigation';
 import React from 'react';
-import RootNavigation from '@/navigation/RootNavigation';
 
 function App(): React.JSX.Element {
 	return <RootNavigation />;
