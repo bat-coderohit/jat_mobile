@@ -1,5 +1,5 @@
 import React from 'react';
-import { GestureResponderEvent, Pressable } from 'react-native';
+import { GestureResponderEvent, Pressable, View } from 'react-native';
 import { JatText } from './JatText';
 
 interface ButtonProps {
@@ -19,20 +19,29 @@ const JatButton: React.FC<ButtonProps> = ({
 }) => {
 	return (
 		<Pressable
-			className={`p-3 rounded-3xl items-center justify-center ${nw}
-				${fill && 'bg-btnBase'}
-				${!fill && 'border-2 border-primary'} 
+			className={`rounded-3xl overflow-hidden ${nw}
+				${!fill && 'bg-transparent border-2 border-primary'}
+				${disabled && 'opacity-50'} 
 			`}
 			onPress={onPress}
 			disabled={disabled}
 		>
-			<JatText
-				className={`text-lg font-semibold ${
-					fill ? 'text-white' : 'text-primary'
-				}`}
-			>
-				{label}
-			</JatText>
+			{({ pressed }) => (
+				<View
+					className={`p-3  items-center justify-center 
+						${fill && 'bg-btnBase'}
+						${pressed ? 'opacity-50' : 'opacity-100'}
+					`}
+				>
+					<JatText
+						className={`text-lg font-semibold ${
+							fill ? 'text-white' : 'text-primary'
+						}`}
+					>
+						{label}
+					</JatText>
+				</View>
+			)}
 		</Pressable>
 	);
 };

@@ -7,6 +7,7 @@ module.exports = {
 				primary: '#030303',
 				base: '#f0f0f0',
 				btnBase: '#f40403',
+				btnRipple: '#ffcccc',
 				white: '#fff',
 			},
 		},
