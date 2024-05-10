@@ -1,6 +1,7 @@
+import { ExtendedThemeColors } from '@_types/Common';
 import { theme } from '../../tailwind.config';
 
-export const getThemeColor = (key: string) => {
+export const getThemeColor: ExtendedThemeColors = key => {
 	if (theme && theme.extend && theme.extend.colors) {
 		let validKey: keyof typeof theme.extend.colors;
 		if (key in theme.extend.colors) {

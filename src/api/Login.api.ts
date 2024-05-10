@@ -9,17 +9,19 @@ const signIn = async ({
 	emailAddress,
 	password,
 }: LoginFormInput): Promise<LoginResponse> => {
-	const response: Response = await fetch(
-		'http://192.168.29.198:8080/auth/sign-in',
-		{
-			method: 'POST',
-			headers: {
-				Authorization: 'Basic ' + btoa(emailAddress + ':' + password),
-			},
-			credentials: 'include',
+	// @param emailAddress: 'johndoe@gmail.com', @param password: 'johndoe'
+
+	const BASE_URL = 'http://192.168.29.198:8080';
+
+	const response: Response = await fetch(`${BASE_URL}/auth/sign-in`, {
+		method: 'POST',
+		headers: {
+			Authorization: 'Basic ' + btoa(emailAddress + ':' + password),
 		},
-	);
+		credentials: 'include',
+	});
 	if (!response.ok) {
+		console.error(response);
 		throw new Error('Failed to Login');
 	}
 

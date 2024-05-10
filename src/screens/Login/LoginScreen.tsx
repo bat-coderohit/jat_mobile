@@ -1,6 +1,7 @@
 import { LoginFormInput, LoginResponse } from '@_types/LoginTypes';
 import { LoginScreenProps } from '@_types/NavigationProps';
 import { signIn } from '@api/Login.api';
+import { useAuth } from '@contexts/AuthContext';
 import JatButton from '@components/JatButton';
 import JatFormInput from '@components/JatFormInput';
 import { JatText } from '@components/JatText';
@@ -13,6 +14,7 @@ import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { Image, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useLoading } from '@contexts/LoaderContext';
 
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 	const {
@@ -24,22 +26,30 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 		resolver: zodResolver(LoginValidation),
 	});
 
+	const { setUser } = useAuth();
+	const { setLoading } = useLoading();
+
 	const {
 		mutate: login,
 		isPending,
 		error,
 	} = useMutation({
 		mutationFn: signIn,
-		onSuccess: data => {
+		onMutate: () => setLoading(true),
+		onSuccess: (data: LoginResponse) => {
 			if (data !== undefined) {
+				setLoading(false);
+				setUser(data);
 				console.log(`Navigate ${data.user_name} to home`);
 			}
 		},
-		onError: (e: any) => console.error('ISE', e.message),
+		onError: (e: Error) => {
+			setLoading(false);
+			console.error('ISE', e);
+		},
 	});
 
 	const onLogin: SubmitHandler<LoginFormInput> = formData => {
-		// @param emailAddress: 'johndoe@gmail.com', @param password: 'johndoe'
 		login(formData);
 	};
 	const onFailed: SubmitErrorHandler<LoginFormInput> = formError => {
@@ -85,10 +95,13 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 					/>
 					<JatButton
 						onPress={handleSubmit(onLogin, onFailed)}
-						label={isPending ? 'Please Wait' : 'Log in'}
+						label={'Log in'}
 						nw="mt-5"
 						disabled={!isValid}
 					/>
+					{isPending && (
+						<JatText className="text-center">Loading ...</JatText>
+					)}
 
 					{/* Divider */}
 					<View className="flex flex-row items-center py-4">

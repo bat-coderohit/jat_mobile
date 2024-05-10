@@ -14,6 +14,7 @@ module.exports = {
 					'@components': './src/components',
 					'@api': './src/api',
 					'@debug': './src/debug',
+					'@contexts': './src/contexts',
 				},
 			},
 		],

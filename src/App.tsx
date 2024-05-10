@@ -9,15 +9,21 @@ if (__DEV__) {
 	require('./debug/Reactotron');
 }
 
+import { AuthProvider } from '@contexts/AuthContext';
+import { LoadingProvider } from '@contexts/LoaderContext';
 import { queryClient } from '@debug/QueryClient';
-import RootNavigation from '@navigation/RootNavigation';
+import RootComponent from '@navigation/Root';
 import { QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
 function App(): React.JSX.Element {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<RootNavigation />
+			<AuthProvider>
+				<LoadingProvider>
+					<RootComponent />
+				</LoadingProvider>
+			</AuthProvider>
 		</QueryClientProvider>
 	);
 }

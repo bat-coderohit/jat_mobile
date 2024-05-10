@@ -10,6 +10,7 @@ import {
 import {
 	InputModeOptions,
 	KeyboardTypeOptions,
+	Pressable,
 	TextInput,
 	View,
 } from 'react-native';
@@ -17,6 +18,8 @@ import { JatText } from './JatText';
 import { getThemeColor } from '@utils/TailwindProperties';
 import { SvgXml } from 'react-native-svg';
 import { I_PW, I_PW_OFF } from '@utils/IconsSet';
+
+const ICON_WIDTH = 20;
 
 interface FormProps<T extends FieldValues> {
 	placeholder: string;
@@ -52,7 +55,7 @@ const JatFormInput = <T extends FieldValues>({
 			name={name}
 			render={({ field: { value, onChange, onBlur } }) => (
 				<>
-					<View>
+					<View className={`mt-${verticalMargin} `}>
 						<TextInput
 							placeholder={placeholder}
 							value={value}
@@ -60,23 +63,27 @@ const JatFormInput = <T extends FieldValues>({
 							onBlur={onBlur}
 							cursorColor={getThemeColor('primary')}
 							placeholderTextColor={
-								getThemeColor('primary') + '80'
-							} //  Add 80% opacity
+								getThemeColor('primary') + '80' //  Add 80% opacity
+							}
 							inputMode={inputMode}
 							keyboardType={keyboardType}
 							secureTextEntry={hidePassword}
-							className={`mt-${verticalMargin} rounded-3xl border-solid border border-[#e4e4e4] text-primary font-normal px-5`}
+							className="rounded-3xl border-solid border border-inpBorder text-primary font-normal px-5"
 						/>
 						{secureTextEntry && (
-							<SvgXml
-								className="flex text-primary absolute right-5 top-[50%]"
-								xml={hidePassword ? I_PW : I_PW_OFF}
-								width={20}
-								height={20}
+							<Pressable
+								className="absolute right-3 px-1.5 h-full justify-center items-center"
 								onPress={() =>
 									togglePasswordDisplay(!hidePassword)
 								}
-							/>
+							>
+								<SvgXml
+									color={getThemeColor('primary')}
+									xml={hidePassword ? I_PW : I_PW_OFF}
+									width={ICON_WIDTH}
+									height={ICON_WIDTH}
+								/>
+							</Pressable>
 						)}
 						{error && (
 							<JatText className="font-light text-red-400 text-xs">
