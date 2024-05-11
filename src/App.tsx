@@ -10,7 +10,7 @@ if (__DEV__) {
 }
 
 import { AuthProvider } from '@contexts/AuthContext';
-import { LoadingProvider } from '@contexts/LoaderContext';
+import { JatContextProvider } from '@contexts/JatContext';
 import { queryClient } from '@debug/QueryClient';
 import RootComponent from '@navigation/Root';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -20,9 +20,9 @@ function App(): React.JSX.Element {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<AuthProvider>
-				<LoadingProvider>
+				<JatContextProvider>
 					<RootComponent />
-				</LoadingProvider>
+				</JatContextProvider>
 			</AuthProvider>
 		</QueryClientProvider>
 	);

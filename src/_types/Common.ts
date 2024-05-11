@@ -1,8 +1,16 @@
 import { Dispatch, SetStateAction } from 'react';
 
-type LoadingContextType = {
+type SnackBarMessage = {
+	message: string;
+	type: 'success' | 'error' | 'info' | 'warning';
+};
+
+type JatContextType = {
 	isLoading: boolean;
+	message: SnackBarMessage;
+
 	setLoading: Dispatch<SetStateAction<boolean>>;
+	setMessage: Dispatch<SetStateAction<SnackBarMessage>>;
 };
 
 interface ExtendedThemeColors {
@@ -17,4 +25,4 @@ interface ExtendedThemeColors {
 	): string;
 }
 
-export type { LoadingContextType, ExtendedThemeColors };
+export type { JatContextType, SnackBarMessage, ExtendedThemeColors };

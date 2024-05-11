@@ -14,9 +14,9 @@ import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { Image, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLoading } from '@contexts/LoaderContext';
+import { useJatContext } from '@contexts/JatContext';
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
 	const {
 		control,
 		handleSubmit,
@@ -27,25 +27,24 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 	});
 
 	const { setUser } = useAuth();
-	const { setLoading } = useLoading();
+	const { setLoading, setMessage } = useJatContext();
 
-	const {
-		mutate: login,
-		isPending,
-		error,
-	} = useMutation({
+	const { mutate: login, isPending } = useMutation({
 		mutationFn: signIn,
 		onMutate: () => setLoading(true),
 		onSuccess: (data: LoginResponse) => {
 			if (data !== undefined) {
 				setLoading(false);
 				setUser(data);
+				setMessage({ message: 'Login Success', type: 'success' });
+
 				console.log(`Navigate ${data.user_name} to home`);
 			}
 		},
 		onError: (e: Error) => {
 			setLoading(false);
-			console.error('ISE', e);
+			setMessage({ message: e.message, type: 'error' });
+			console.log('ISE', e);
 		},
 	});
 
@@ -53,7 +52,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 		login(formData);
 	};
 	const onFailed: SubmitErrorHandler<LoginFormInput> = formError => {
-		console.error(formError);
+		console.warn(formError);
 	};
 
 	return (
@@ -97,11 +96,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 						onPress={handleSubmit(onLogin, onFailed)}
 						label={'Log in'}
 						nw="mt-5"
-						disabled={!isValid}
+						disabled={!isValid && !isPending}
 					/>
-					{isPending && (
-						<JatText className="text-center">Loading ...</JatText>
-					)}
 
 					{/* Divider */}
 					<View className="flex flex-row items-center py-4">
@@ -125,7 +121,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 							nw="mt-0 w-[49.25%]"
 						/>
 						<JatButton
-							onPress={() => {}}
+							onPress={() => navigation.navigate('SignUp')}
 							label="New User? Sign up"
 							fill={false}
 							nw="mt-5 w-full"
@@ -137,4 +133,4 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 	);
 };
 
-export default LoginScreen;
+export default Login;

@@ -21,11 +21,19 @@ const signIn = async ({
 		credentials: 'include',
 	});
 	if (!response.ok) {
-		console.error(response);
+		console.debug(response);
 		throw new Error('Failed to Login');
 	}
 
 	return await response.json();
 };
+
+// {
+// 	"emailAddress": "johndoe@gmail.com",
+// 	"password": "johndoe",
+// 	"contact": "+91-9878876776",
+// 	"dateOfBirth": "1997-11-11",
+// 	"roleId": 2
+//   }
 
 export { signIn };

@@ -46,6 +46,7 @@ const JatFormInput = <T extends FieldValues>({
 	secureTextEntry = false,
 	verticalMargin = 5,
 }: FormProps<T>) => {
+	// TODO: Create another HOC for state management
 	const [hidePassword, togglePasswordDisplay] =
 		useState<boolean>(secureTextEntry);
 
