@@ -74,14 +74,17 @@ const JatSnackBar: React.FC<SnackBarProps> = ({
 					className={`${bg_color} border rounded-md ${border_color} justify-center`}
 				>
 					<View className="flex-row justify-between p-3">
-						<JatText className={`font-bold ${text_color}`}>
+						<JatText className={`font-bold ${text_color} w-11/12`}>
 							{`${type.toLocaleUpperCase()} : `}
 							<JatText className={`font-light ${text_color}`}>
 								{message}
 							</JatText>
 						</JatText>
 
-						<Pressable onPress={hideMessage}>
+						<Pressable
+							className="flex w-1/12 items-end"
+							onPress={hideMessage}
+						>
 							<SvgXml
 								color={getThemeColor('primary')}
 								xml={I_CLOSE}

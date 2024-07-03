@@ -1,4 +1,15 @@
-import { LoginFormInput, LoginResponse } from '@_types/LoginTypes';
+import { AxiosResponse } from 'axios';
+
+import {
+	LoginFormInput,
+	LoginResponse,
+	SignUpFormInput,
+	SignUpRequest,
+	SignUpResponse,
+} from '@_types/api/LoginTypes';
+import { jatFetch, jatFetchSecure } from '@api/api';
+import { MessageResponse } from '@_types/api/Common';
+import * as JatSecureStorage from '@utils/JatSecureStorageUtils';
 
 /**
  * Sign in a user using the given login credentials.
@@ -9,16 +20,53 @@ const signIn = async ({
 	emailAddress,
 	password,
 }: LoginFormInput): Promise<LoginResponse> => {
-	// @param emailAddress: 'johndoe@gmail.com', @param password: 'johndoe'
+	return jatFetch({
+		method: 'POST',
+		url: '/auth/sign-in',
+		auth: { username: emailAddress, password: password },
+	}).then((response: AxiosResponse) => {
+		console.log(response.status);
+		console.log(response.headers['set-cookie']);
 
-	const BASE_URL = 'http://192.168.29.198:8080';
+		let refreshToken = '';
+		if (response.headers['set-cookie']) {
+			const setCookieHeader: string[] =
+				response.headers['set-cookie'][0].split(';');
 
-	const response: Response = await fetch(`${BASE_URL}/auth/sign-in`, {
+			const refreshTokenCookie: string =
+				setCookieHeader.find(cookie =>
+					cookie.startsWith('refresh_token'),
+				) || '';
+
+			refreshToken = refreshTokenCookie.split('=')[1];
+		}
+		const authData: LoginResponse = response.data;
+
+		JatSecureStorage.store('access_token', authData.access_token);
+		JatSecureStorage.store('refresh_token', refreshToken);
+
+		return response.data;
+	});
+};
+
+const signUp = async (formData: SignUpFormInput): Promise<SignUpResponse> => {
+	// @param {
+	// 	"emailAddress": "johndoe@gmail.com",
+	// 	"password": "johndoe",
+	// 	"contact": "+91-9878876776",
+	// 	"dateOfBirth": "1997-11-11",
+	// 	"roleId": 2
+	//   }
+
+	const requestBody: SignUpRequest = { ...formData, roleId: 1 };
+	requestBody.roleId = 2;
+
+	const response: Response = await fetch(`${'BASE_URL'}/auth/sign-up`, {
 		method: 'POST',
 		headers: {
-			Authorization: 'Basic ' + btoa(emailAddress + ':' + password),
+			'Content-Type': 'application/json',
 		},
-		credentials: 'include',
+		body: JSON.stringify(requestBody),
 	});
 	if (!response.ok) {
 		console.debug(response);
@@ -28,12 +76,15 @@ const signIn = async ({
 	return await response.json();
 };
 
-// {
-// 	"emailAddress": "johndoe@gmail.com",
-// 	"password": "johndoe",
-// 	"contact": "+91-9878876776",
-// 	"dateOfBirth": "1997-11-11",
-// 	"roleId": 2
-//   }
+const signOut = async (): Promise<MessageResponse> => {
+	return jatFetchSecure({
+		method: 'POST',
+		url: '/auth/sign-out',
+	}).then((response: AxiosResponse) => {
+		console.log(response);
 
-export { signIn };
+		return response.data;
+	});
+};
+
+export { signIn, signUp, signOut };

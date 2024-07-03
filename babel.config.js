@@ -18,6 +18,17 @@ module.exports = {
 				},
 			},
 		],
+		[
+			'module:react-native-dotenv',
+			{
+				envName: 'APP_ENV',
+				moduleName: '@env',
+				path: './env/.env',
+				safe: false,
+				allowUndefined: false,
+				verbose: false,
+			},
+		],
 		'nativewind/babel',
 	],
 };

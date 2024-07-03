@@ -9,7 +9,6 @@ if (__DEV__) {
 	require('./debug/Reactotron');
 }
 
-import { AuthProvider } from '@contexts/AuthContext';
 import { JatContextProvider } from '@contexts/JatContext';
 import { queryClient } from '@debug/QueryClient';
 import RootComponent from '@navigation/Root';
@@ -19,11 +18,9 @@ import React from 'react';
 function App(): React.JSX.Element {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<AuthProvider>
-				<JatContextProvider>
-					<RootComponent />
-				</JatContextProvider>
-			</AuthProvider>
+			<JatContextProvider>
+				<RootComponent />
+			</JatContextProvider>
 		</QueryClientProvider>
 	);
 }

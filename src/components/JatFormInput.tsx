@@ -18,12 +18,13 @@ import { JatText } from './JatText';
 import { getThemeColor } from '@utils/TailwindProperties';
 import { SvgXml } from 'react-native-svg';
 import { I_PW, I_PW_OFF } from '@utils/IconsSet';
+import { JatTextInput } from './JatTextInput';
 
 const ICON_WIDTH = 20;
 
 interface FormProps<T extends FieldValues> {
 	placeholder: string;
-	name: Path<T>;
+	label?: string;
 	defaultValue?: string;
 	inputMode: InputModeOptions;
 	keyboardType?: KeyboardTypeOptions;
@@ -31,6 +32,7 @@ interface FormProps<T extends FieldValues> {
 	verticalMargin?: number;
 
 	// Form fields
+	name: Path<T>;
 	error?: FieldError;
 	control: Control<T>;
 	rules?: RegisterOptions;
@@ -41,6 +43,7 @@ const JatFormInput = <T extends FieldValues>({
 	error,
 	name,
 	placeholder,
+	label,
 	inputMode,
 	keyboardType = 'default',
 	secureTextEntry = false,
@@ -55,9 +58,14 @@ const JatFormInput = <T extends FieldValues>({
 			control={control}
 			name={name}
 			render={({ field: { value, onChange, onBlur } }) => (
-				<>
-					<View className={`mt-${verticalMargin} `}>
-						<TextInput
+				<View className={`mt-${verticalMargin}`}>
+					{label && (
+						<JatText className="text-primary font-semibold mb-2">
+							{label}
+						</JatText>
+					)}
+					<View>
+						<JatTextInput
 							placeholder={placeholder}
 							value={value}
 							onChangeText={onChange}
@@ -69,7 +77,9 @@ const JatFormInput = <T extends FieldValues>({
 							inputMode={inputMode}
 							keyboardType={keyboardType}
 							secureTextEntry={hidePassword}
-							className="rounded-3xl border-solid border border-inpBorder text-primary font-normal px-5"
+							className={`${
+								label !== '' ? 'rounded-md' : 'rounded-3xl'
+							} border border-inpBorder`}
 						/>
 						{secureTextEntry && (
 							<Pressable
@@ -87,12 +97,12 @@ const JatFormInput = <T extends FieldValues>({
 							</Pressable>
 						)}
 						{error && (
-							<JatText className="font-light text-red-400 text-xs">
+							<JatText className="font-light text-red-400 text-xs mt-0.5">
 								{error.message}
 							</JatText>
 						)}
 					</View>
-				</>
+				</View>
 			)}
 		/>
 	);

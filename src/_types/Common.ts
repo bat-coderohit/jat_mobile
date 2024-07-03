@@ -5,12 +5,30 @@ type SnackBarMessage = {
 	type: 'success' | 'error' | 'info' | 'warning';
 };
 
+type UserProfile = {
+	auth: {
+		access_token_expiry?: number;
+		user_name: string;
+	};
+	roleId?: number;
+	isSignedIn: boolean;
+};
+
+type JatErrorBody = {
+	statusCode: number;
+	debugMessage?: string;
+	displayMessage: string;
+	stackTrace?: string;
+};
+
 type JatContextType = {
 	isLoading: boolean;
 	message: SnackBarMessage;
+	profile: UserProfile;
 
 	setLoading: Dispatch<SetStateAction<boolean>>;
 	setMessage: Dispatch<SetStateAction<SnackBarMessage>>;
+	setProfile: Dispatch<SetStateAction<UserProfile>>;
 };
 
 interface ExtendedThemeColors {
@@ -25,4 +43,10 @@ interface ExtendedThemeColors {
 	): string;
 }
 
-export type { JatContextType, SnackBarMessage, ExtendedThemeColors };
+export type {
+	JatContextType,
+	SnackBarMessage,
+	UserProfile,
+	ExtendedThemeColors,
+	JatErrorBody,
+};

@@ -1,7 +1,6 @@
-import { LoginFormInput, LoginResponse } from '@_types/LoginTypes';
+import { LoginFormInput, LoginResponse } from '@_types/api/LoginTypes';
 import { LoginScreenProps } from '@_types/NavigationProps';
 import { signIn } from '@api/Login.api';
-import { useAuth } from '@contexts/AuthContext';
 import JatButton from '@components/JatButton';
 import JatFormInput from '@components/JatFormInput';
 import { JatText } from '@components/JatText';
@@ -15,6 +14,10 @@ import { Image, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useJatContext } from '@contexts/JatContext';
+import { I_GITHUB, I_GOOGLE } from '@utils/IconsSet';
+import { JatDivider } from '@components/JatDivider';
+import { JatError } from '@api/JatError';
+import { UserProfile } from '@_types/Common';
 
 const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
 	const {
@@ -26,25 +29,31 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
 		resolver: zodResolver(LoginValidation),
 	});
 
-	const { setUser } = useAuth();
-	const { setLoading, setMessage } = useJatContext();
+	const { setLoading, setMessage, setProfile } = useJatContext();
 
 	const { mutate: login, isPending } = useMutation({
 		mutationFn: signIn,
 		onMutate: () => setLoading(true),
 		onSuccess: (data: LoginResponse) => {
-			if (data !== undefined) {
-				setLoading(false);
-				setUser(data);
+			setLoading(false);
+			if (data !== null) {
 				setMessage({ message: 'Login Success', type: 'success' });
 
-				console.log(`Navigate ${data.user_name} to home`);
+				const profileData: UserProfile = {
+					auth: {
+						user_name: data.user_name,
+						access_token_expiry: data.access_token_expiry,
+					},
+					isSignedIn: true,
+				};
+				setProfile(profileData);
+			} else {
+				setMessage({ message: 'Login Success', type: 'success' });
 			}
 		},
-		onError: (e: Error) => {
+		onError: (e: JatError) => {
 			setLoading(false);
-			setMessage({ message: e.message, type: 'error' });
-			console.log('ISE', e);
+			setMessage({ message: e.displayMessage, type: 'error' });
 		},
 	});
 
@@ -76,6 +85,7 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
 					<JatText className="font-semibold text-3xl text-primary mb-3">
 						Sign in
 					</JatText>
+
 					{/* Form Fields */}
 					<JatFormInput
 						control={control}
@@ -101,9 +111,9 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
 
 					{/* Divider */}
 					<View className="flex flex-row items-center py-4">
-						<View className="flex-1 h-px bg-base" />
+						<JatDivider />
 						<JatText className="px-5 text-lg">or</JatText>
-						<View className="flex-1 h-px bg-base" />
+						<JatDivider />
 					</View>
 
 					{/* Other Sign in */}
@@ -111,12 +121,14 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
 						<JatButton
 							onPress={() => {}}
 							label="Google"
+							iconForLabel={I_GOOGLE}
 							fill={false}
 							nw="mt-0 w-[49.25%]"
 						/>
 						<JatButton
 							onPress={() => {}}
 							label="Github"
+							iconForLabel={I_GITHUB}
 							fill={false}
 							nw="mt-0 w-[49.25%]"
 						/>

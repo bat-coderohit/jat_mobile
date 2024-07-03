@@ -1,11 +1,20 @@
-import { JatContextType, SnackBarMessage } from '@_types/Common';
+import { JatContextType, SnackBarMessage, UserProfile } from '@_types/Common';
+import * as StorageUtils from '@utils/StorageUtils';
 import React, {
 	ReactElement,
 	ReactNode,
 	createContext,
 	useContext,
+	useEffect,
 	useState,
 } from 'react';
+
+const INITIAL_PROFILE: UserProfile = {
+	auth: {
+		user_name: '',
+	},
+	isSignedIn: false,
+};
 
 const JatContext = createContext<JatContextType | undefined>(undefined);
 
@@ -24,10 +33,36 @@ const JatContextProvider = (props: { children: ReactNode }): ReactElement => {
 		type: 'info',
 	});
 
+	const [profile, setProfile] = useState<UserProfile>(INITIAL_PROFILE);
+
+	// To load data from ASyncStorage upon application load
+	useEffect(() => {
+		// TODO: Reduce number of times called
+		StorageUtils.loadData('user_profile').then((data: string | null) => {
+			if (data != null) {
+				console.log('ASD', data);
+				let profileData: UserProfile = JSON.parse(data);
+				setProfile(profileData);
+			}
+		});
+	}, []);
+
+	// To update data in ASyncStorage
+	useEffect(() => {
+		StorageUtils.saveData('user_profile', profile);
+	}, [profile]);
+
 	// TODO: Implement useMemo before passing to Provider
 	return (
 		<JatContext.Provider
-			value={{ isLoading, setLoading, message, setMessage }}
+			value={{
+				isLoading,
+				message,
+				profile,
+				setMessage,
+				setLoading,
+				setProfile,
+			}}
 			{...props}
 		/>
 	);
